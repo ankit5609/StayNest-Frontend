@@ -67,7 +67,14 @@ function GuestsPage() {
     if (!window.confirm(`Remove ${g.name} from your saved guests?`)) return;
     deleteMut.mutate(g.id, {
       onSuccess: () => toast.success("Guest removed"),
-      onError: (err) => toast.error(err instanceof Error ? err.message : "Delete failed"),
+      onError: (err: any) => {
+        if (err?.status === 401 || err?.status === 403) return; // AuthGateModal handles this
+        if (err?.status === 409) {
+          toast.error("This guest is linked to an active booking and cannot be removed right now.");
+        } else {
+          toast.error(err instanceof Error ? err.message : "Could not remove this guest. Please try again.");
+        }
+      },
     });
   };
 

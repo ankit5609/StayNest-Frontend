@@ -111,7 +111,14 @@ function HotelsListPage() {
               toast.success("Hotel deleted");
               setToDelete(null);
             },
-            onError: (err) => toast.error(err.message),
+        onError: (err: any) => {
+            if (err?.status === 401 || err?.status === 403) return; // AuthGateModal handles this
+            if (err?.status === 409) {
+              toast.error("This hotel has active bookings and cannot be deleted.");
+            } else {
+              toast.error(err?.message ?? "Failed to delete hotel. Please try again.");
+            }
+          },
           });
         }}
       />

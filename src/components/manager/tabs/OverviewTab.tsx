@@ -65,8 +65,9 @@ export function OverviewTab({ hotelId, hotel }: Props) {
                 await updateMut.mutateAsync(body);
                 toast.success("Profile updated");
                 setEditing(false);
-              } catch (err) {
-                toast.error(err instanceof Error ? err.message : "Failed to update");
+              } catch (err: any) {
+                if (err?.status === 401 || err?.status === 403) return;
+                toast.error(err?.message ?? "Failed to update hotel profile. Please try again.");
               }
             }}
           />
@@ -126,8 +127,9 @@ export function OverviewTab({ hotelId, hotel }: Props) {
                 contactInfo: hotel.contactInfo,
               });
               toast.success("Photo removed");
-            } catch (err) {
-              toast.error(err instanceof Error ? err.message : "Failed");
+            } catch (err: any) {
+              if (err?.status === 401 || err?.status === 403) return;
+              toast.error(err?.message ?? "Could not remove photo. Please try again.");
             }
           }}
         />
@@ -158,7 +160,14 @@ export function OverviewTab({ hotelId, hotel }: Props) {
               onCheckedChange={() => {
                 activateMut.mutate(undefined, {
                   onSuccess: () => toast.success("Hotel is now live!"),
-                  onError: (err) => toast.error(err.message),
+                  onError: (err: any) => {
+                    if (err?.status === 401 || err?.status === 403) return;
+                    if (err?.status === 422) {
+                      toast.error("Please add at least one photo and one room before activating.");
+                    } else {
+                      toast.error(err?.message ?? "Could not activate hotel. Please try again.");
+                    }
+                  },
                 });
               }}
             />
@@ -198,7 +207,14 @@ export function OverviewTab({ hotelId, hotel }: Props) {
               toast.success("Hotel deleted");
               navigate({ to: "/manage/hotels" });
             },
-            onError: (err) => toast.error(err.message),
+            onError: (err: any) => {
+              if (err?.status === 401 || err?.status === 403) return;
+              if (err?.status === 409) {
+                toast.error("This hotel has active bookings and cannot be deleted.");
+              } else {
+                toast.error(err?.message ?? "Failed to delete hotel. Please try again.");
+              }
+            },
           });
         }}
       />

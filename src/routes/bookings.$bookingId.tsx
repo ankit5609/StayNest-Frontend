@@ -86,35 +86,8 @@ function BookingDetailPage() {
     retry: false,
   });
 
-  // Fallback dummy booking so any /bookings/:id renders something premium
-  // even when the backend / mock store doesn't know this id yet.
-  const dummy: BookingDto = {
-    id: Number.isFinite(id) ? id : 4826,
-    bookingStatus: "CONFIRMED",
-    checkInDate: "2026-07-15",
-    checkOutDate: "2026-07-18",
-    roomsCount: 1,
-    amount: 1284,
-    refundAmount: 0,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    hotel: {
-      id: 1,
-      name: "Aman Ubud Retreat",
-      city: "Ubud, Bali",
-      photos: [
-        "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1600&q=80",
-        "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1600&q=80",
-      ],
-    } as any,
-    room: { id: 101, name: "Jungle Pool Villa", type: "Villa" } as any,
-    guests: [
-      { id: 1, name: "Ankit Kumar", email: "ankit@example.com" } as any,
-    ],
-  } as BookingDto;
-
-  const b = bookingQ.data ?? (bookingQ.isError ? dummy : undefined);
-  const isDummy = !bookingQ.data && bookingQ.isError;
+  const b = bookingQ.data;
+  const isDummy = false;
 
   const hotelInfoQ = useHotelInfo(b?.hotel.id ?? 0, {
     startDate: b?.checkInDate ?? "",
@@ -130,7 +103,15 @@ function BookingDetailPage() {
       qc.invalidateQueries({ queryKey: ["booking", id] });
       setConfirmOpen(false);
     },
-    onError: (e: any) => toast.error(e?.message ?? "Failed to cancel booking"),
+    onError: (e: any) => {
+      const status = e?.status;
+      if (status === 401 || status === 403) return; // AuthGateModal handles this
+      if (status === 409) {
+        toast.error("This booking cannot be cancelled at this stage.");
+      } else {
+        toast.error(e?.message ?? "Failed to cancel booking. Please try again.");
+      }
+    },
   });
 
   return (

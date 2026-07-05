@@ -80,8 +80,16 @@ function HotelDetailsPage() {
         roomsCount,
       });
       navigate({ to: "/checkout/$bookingId", params: { bookingId: String(booking.id) } });
-    } catch (e) {
-      toast.error((e as Error)?.message ?? "Couldn't reserve the room. Please try again.");
+    } catch (e: any) {
+      const status = e?.status;
+      if (status === 401 || status === 403) return; // AuthGateModal handles this
+      if (status === 409) {
+        toast.error("These dates are no longer available. Please choose different dates.");
+      } else if (status === 410) {
+        toast.error("Your session timed out. Please try reserving again.");
+      } else {
+        toast.error(e?.message ?? "Couldn't reserve the room. Please try again.");
+      }
     } finally {
       setReserving(false);
     }

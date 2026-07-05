@@ -62,13 +62,23 @@ function CheckoutPage() {
   const addGuestsM = useMutation({
     mutationFn: (ids: number[]) => addBookingGuests(id, ids),
     onSuccess: () => setStep("review"),
-    onError: (e: Error) => toast.error(e.message ?? "Couldn't save companions."),
+    onError: (e: any) => {
+      if (e?.status === 401 || e?.status === 403) return; // AuthGateModal handles this
+      toast.error(e?.message ?? "Couldn't save companions. Please try again.");
+    },
   });
 
   const payM = useMutation({
     mutationFn: () => initiatePayment(id),
     onSuccess: (res) => { window.location.href = res.sessionUrl; },
-    onError: (e: Error) => toast.error(e.message ?? "Couldn't start payment."),
+    onError: (e: any) => {
+      if (e?.status === 401 || e?.status === 403) return; // AuthGateModal handles this
+      if (e?.status === 410) {
+        toast.error("This booking has expired. Please start a new reservation.");
+      } else {
+        toast.error(e?.message ?? "Payment could not be initiated. Please try again.");
+      }
+    },
   });
 
   const booking = bookingQ.data;
