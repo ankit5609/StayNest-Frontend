@@ -26,6 +26,8 @@ function buildUrl(path: string, query?: Record<string, QueryValue>): string {
   if (query) {
     for (const [k, v] of Object.entries(query)) {
       if (v === undefined || v === null || v === "") continue;
+      // treat 0 as "no filter" for price params
+      if ((k === "minPrice" || k === "maxPrice") && v === 0) continue;
       url.searchParams.set(k, String(v));
     }
   }
