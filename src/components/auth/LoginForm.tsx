@@ -59,7 +59,14 @@ export function LoginForm() {
       toast.success(
         asManager ? "Welcome back, host" : "Welcome back to StayNest",
       );
-      navigate({ to: asManager ? "/manage" : "/" });
+      // Return to the page the user was on when they were prompted to log in
+      const returnUrl = sessionStorage.getItem("staynest.return_url");
+      sessionStorage.removeItem("staynest.return_url");
+      if (returnUrl && !returnUrl.includes("/auth") && !returnUrl.includes("/signup")) {
+        window.location.href = returnUrl;
+      } else {
+        navigate({ to: asManager ? "/manage" : "/" });
+      }
     },
 
     onError: (err: unknown) => {

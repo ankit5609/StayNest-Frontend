@@ -67,7 +67,14 @@ export function SignUpForm() {
         name: res.name ?? variables.name.trim(),
       });
       toast.success("Welcome to StayNest");
-      navigate({ to: asManager ? "/manage" : "/" });
+      // Return to the page the user was on when they were prompted to sign up
+      const returnUrl = sessionStorage.getItem("staynest.return_url");
+      sessionStorage.removeItem("staynest.return_url");
+      if (returnUrl && !returnUrl.includes("/auth") && !returnUrl.includes("/signup")) {
+        window.location.href = returnUrl;
+      } else {
+        navigate({ to: asManager ? "/manage" : "/" });
+      }
     },
 
     onError: (err: unknown) => {

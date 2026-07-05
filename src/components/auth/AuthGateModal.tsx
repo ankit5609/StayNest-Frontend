@@ -97,7 +97,10 @@ export function AuthGateModal() {
             <div className="mt-7 flex flex-col gap-3">
               <Link
                 to="/auth"
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  sessionStorage.setItem("staynest.return_url", window.location.href);
+                  setOpen(false);
+                }}
                 className="flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-[14px] font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary-mid active:scale-[0.98]"
               >
                 <LogIn className="h-4 w-4" />
@@ -105,7 +108,10 @@ export function AuthGateModal() {
               </Link>
               <Link
                 to="/signup"
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  sessionStorage.setItem("staynest.return_url", window.location.href);
+                  setOpen(false);
+                }}
                 className="flex items-center justify-center gap-2 rounded-xl border border-border bg-white px-5 py-3 text-[14px] font-medium text-ink shadow-sm transition-all hover:bg-surface active:scale-[0.98]"
               >
                 <UserPlus className="h-4 w-4" />
