@@ -198,7 +198,8 @@ function BookingBody({
     bg: "bg-gray-100",
     label: displayStatus,
   };
-  const canCancel = CANCELLABLE.includes(b.bookingStatus);
+  const hasStarted = b.checkInDate <= todayStr;
+  const canCancel = CANCELLABLE.includes(b.bookingStatus) && !hasStarted && displayStatus !== "COMPLETED";
   const nights = nightsBetween(b.checkInDate, b.checkOutDate);
   const contact = hotelInfo?.hotel.contactInfo;
   const amenities = hotelInfo?.hotel.amenities ?? [];
