@@ -33,7 +33,7 @@ const FALLBACK_HOTEL_PHOTOS = [
   "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1200&q=80&fit=crop",
 ];
 
-export function SearchHotelCard({ hotel, context }) {
+export function SearchHotelCard({ hotel, context, view = "grid" }) {
   const { ids } = useWishlistIds();
   const toggle = useToggleWishlist();
   const fav = ids.has(hotel.id);
@@ -43,6 +43,7 @@ export function SearchHotelCard({ hotel, context }) {
   const photos = rawPhotos.length > 0 ? rawPhotos : FALLBACK_HOTEL_PHOTOS;
   const amenities = (hotel.amenities ?? []).slice(0, 4);
   const intervalRef = useRef(null);
+  const isList = view === "list";
 
   useEffect(() => {
     if (hovered && photos.length > 1) {
@@ -65,9 +66,15 @@ export function SearchHotelCard({ hotel, context }) {
         setHovered(false);
         setPhotoIndex(0);
       }}
-      className="group flex h-full flex-col overflow-hidden rounded-3xl bg-card shadow-[0_10px_40px_-25px_rgba(17,26,19,0.25)] ring-1 ring-black/[0.04] transition-shadow duration-500 hover:shadow-[0_25px_60px_-30px_rgba(17,26,19,0.4)]"
+      className={[
+        "group overflow-hidden rounded-3xl bg-card shadow-[0_10px_40px_-25px_rgba(17,26,19,0.25)] ring-1 ring-black/[0.04] transition-shadow duration-500 hover:shadow-[0_25px_60px_-30px_rgba(17,26,19,0.4)]",
+        isList ? "flex flex-col md:flex-row" : "flex h-full flex-col",
+      ].join(" ")}
     >
-      <div className="relative aspect-[16/11] w-full overflow-hidden bg-surface">
+      <div className={[
+        "relative overflow-hidden bg-surface shrink-0",
+        isList ? "w-full md:w-[320px] aspect-[16/10]" : "aspect-[16/11] w-full"
+      ].join(" ")}>
         {photos.length > 0 ? (
           photos.map((src, i) => (
             <img

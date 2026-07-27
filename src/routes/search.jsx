@@ -283,6 +283,7 @@ export default function SearchPage() {
                   <ResultsGrid
                     hotels={hotels}
                     isLoading={query.isLoading}
+                    view={view}
                     context={{
                       startDate: search.startDate,
                       endDate: search.endDate,
