@@ -30,23 +30,25 @@ export default function SuccessPage() {
     if (!Number.isFinite(id) || confirmed || timedOut) return;
     try {
       const statusRes = await getBookingStatus(id);
-      if (statusRes?.bookingStatus === "CONFIRMED") {
+      const status = statusRes?.bookingStatus;
+      if (status === "CONFIRMED" || status === "COMPLETED") {
         setConfirmed(true);
         setTimedOut(false);
         const detail = await getBooking(id);
         setBookingDetail(detail);
       }
     } catch {
-      // Keep trying until timeout
+      // Keep trying
     }
   }, [id, confirmed, timedOut]);
 
   useEffect(() => {
     if (confirmed || timedOut || !Number.isFinite(id)) return;
+    checkStatus();
     const interval = setInterval(() => {
       checkStatus();
       setPollTime((prev) => {
-        if (prev >= 20) {
+        if (prev >= 60) {
           setTimedOut(true);
           clearInterval(interval);
           return prev;

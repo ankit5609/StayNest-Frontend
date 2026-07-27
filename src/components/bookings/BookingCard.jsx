@@ -22,6 +22,12 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+const currency = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+  maximumFractionDigits: 0,
+});
+
 const STATUS_STYLES = {
   CONFIRMED: { dot: "bg-[#3a5a40]", text: "text-[#2c4632]", bg: "bg-[#e8efe4]", label: "CONFIRMED" },
   COMPLETED: { dot: "bg-[#3b6a8a]", text: "text-[#2b526d]", bg: "bg-[#e2ecf3]", label: "COMPLETED" },
@@ -179,7 +185,7 @@ export function BookingCard({ booking, index, onRefresh }) {
                 <div className="text-right">
                   <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Total Amount</div>
                   <div className="font-display text-2xl leading-none text-primary">
-                    ${booking.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                    {currency.format(booking.amount)}
                   </div>
                 </div>
                 <Link to={`/bookings/${booking.id}`} className="inline-flex items-center rounded-xl bg-primary px-4 py-2.5 text-[12.5px] font-medium text-primary-foreground shadow-sm transition-all duration-200 hover:bg-primary-mid hover:shadow-[0_8px_20px_-10px_rgba(17,26,19,0.4)]">
