@@ -332,6 +332,14 @@ export default function SearchPage() {
             isThinking={isThinking}
             highlight={assistantHighlight}
             onAsk={(q) => {
+              if (q === "Cheapest hotels") {
+                setFilters({ ...filters, sortBy: "PRICE_ASC" });
+              } else if (q === "5-star resorts") {
+                setSelectedPropertyTypes(["Resort"]);
+                setFilters({ ...filters, minRating: 5 });
+              } else if (q === "Near the beach" || q === "Pool & Spa") {
+                setSelectedAmenities(["pool", "spa"]);
+              }
               const p = new URLSearchParams(searchParams);
               p.set("q", q);
               setSearchParams(p, { replace: true });

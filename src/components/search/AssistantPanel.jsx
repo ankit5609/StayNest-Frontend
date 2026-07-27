@@ -80,7 +80,7 @@ export function AssistantPanel({ messages, interpreted, missing, onAsk, isThinki
 
         <div className="max-h-[360px] space-y-3 overflow-y-auto scroll-pt-4 pt-6 pb-4 pr-1">
           {messages.length === 0 && !interpreted && (<p className="text-[13px] leading-relaxed text-muted-foreground">
-              Ask me anything — "a quiet villa in Ubud for two under $250".
+              Ask me anything — "a luxury stay in Mumbai for two under ₹5,000".
             </p>)}
           {messages.map((m) => (<div key={m.id} className={m.role === "user"
                 ? "ml-6 flex justify-end"
