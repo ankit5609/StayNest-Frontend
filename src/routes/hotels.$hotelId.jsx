@@ -24,8 +24,21 @@ export default function HotelDetailsPage() {
   const { hotelId } = useParams();
   const [searchParams] = useSearchParams();
 
-  const startDate = searchParams.get("checkIn") || searchParams.get("startDate") || todayPlus(7);
-  const endDate = searchParams.get("checkOut") || searchParams.get("endDate") || todayPlus(10);
+  const rawStart = searchParams.get("checkIn") || searchParams.get("startDate") || todayPlus(1);
+  const rawEnd = searchParams.get("checkOut") || searchParams.get("endDate") || todayPlus(3);
+
+  const startDate = rawStart;
+  const endDate = useMemo(() => {
+    const s = new Date(rawStart);
+    const e = new Date(rawEnd);
+    if (isNaN(e.getTime()) || e <= s) {
+      const fallback = new Date(s);
+      fallback.setDate(fallback.getDate() + 2);
+      return fallback.toISOString().slice(0, 10);
+    }
+    return rawEnd;
+  }, [rawStart, rawEnd]);
+
   const roomsCount = Number(searchParams.get("rooms")) || Number(searchParams.get("roomsCount")) || 1;
 
   const nights = useMemo(() => {
@@ -64,6 +77,8 @@ export default function HotelDetailsPage() {
         toast.error("These dates are no longer available. Please choose different dates.");
       } else if (status === 410) {
         toast.error("Your session timed out. Please try reserving again.");
+      } else if (e?.message === "Validation failed" || e?.message?.includes("Validation")) {
+        toast.error("Check-out date must be after check-in date.");
       } else {
         toast.error(e?.message ?? "Couldn't reserve the room. Please try again.");
       }
