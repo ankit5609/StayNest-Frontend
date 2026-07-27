@@ -38,7 +38,8 @@ function RoomCard({ room, nights, selected, onSelect }) {
         return () => { if (ref.current)
             clearInterval(ref.current); ref.current = null; };
     }, [hover, photos.length]);
-    const nightlyBase = nights > 0 ? Math.round(room.price / nights) : room.price;
+    const nightlyBase = Math.round(room.price);
+    const totalStay = nightlyBase * (nights > 0 ? nights : 1);
     return (<article onMouseEnter={() => setHover(true)} onMouseLeave={() => { setHover(false); setI(0); }} className={[
             "group flex flex-col overflow-hidden rounded-2xl border bg-background transition-all",
             selected ? "border-primary shadow-[0_10px_30px_-12px_rgba(26,46,32,0.35)]" : "border-border/70 hover:border-primary/40 hover:shadow-[0_10px_30px_-16px_rgba(26,46,32,0.28)]",
@@ -69,7 +70,7 @@ function RoomCard({ room, nights, selected, onSelect }) {
           <div>
             <div className="text-[20px] font-semibold text-ink">{currency.format(nightlyBase)}</div>
             <div className="text-[11px] text-muted-foreground">
-              per night{nights > 0 && ` · ${currency.format(room.price)} total`}
+              per night{nights > 0 && ` · ${currency.format(totalStay)} total`}
             </div>
           </div>
           <button type="button" onClick={onSelect} className={[

@@ -9,14 +9,17 @@ function fmt(d) {
     }
 }
 export function BookingCard({ room, startDate, endDate, roomsCount, nights, onReserve }) {
-    const total = room ? room.price : 0;
+    const n = nights > 0 ? nights : 1;
+    const rc = roomsCount > 0 ? roomsCount : 1;
+    const nightlyPrice = room ? Math.round(room.price) : 0;
+    const total = nightlyPrice * n * rc;
     const taxes = Math.round(total * 0.12);
     const grand = total + taxes;
     return (<aside className="sticky top-24 space-y-4 rounded-2xl border border-border/70 bg-background/95 p-6 shadow-[0_20px_50px_-24px_rgba(26,46,32,0.25)] backdrop-blur">
       <div>
         <div className="flex items-baseline gap-2">
           <span className="text-[26px] font-semibold text-ink">
-            {room ? currency.format(nights > 0 ? Math.round(room.price / nights) : room.price) : "—"}
+            {room ? currency.format(nightlyPrice) : "—"}
           </span>
           <span className="text-[12.5px] text-muted-foreground">/ night</span>
         </div>
@@ -47,7 +50,7 @@ export function BookingCard({ room, startDate, endDate, roomsCount, nights, onRe
 
       {room && (<div className="space-y-1.5 border-t border-border/60 pt-3 text-[13px]">
           <div className="flex justify-between text-muted-foreground">
-            <span>{currency.format(Math.round(room.price / Math.max(nights, 1)))} × {nights || 1} night{nights === 1 ? "" : "s"}</span>
+            <span>{currency.format(nightlyPrice)} × {n} night{n === 1 ? "" : "s"}</span>
             <span className="text-ink">{currency.format(total)}</span>
           </div>
           <div className="flex justify-between text-muted-foreground">
