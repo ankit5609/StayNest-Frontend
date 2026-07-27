@@ -1,23 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { searchHotels } from "@/lib/api/hotels";
-
-const FEATURED_CITY = import.meta.env.VITE_FEATURED_CITY ?? "Bali";
-
-function toIsoDate(d) {
-  return d.toISOString().slice(0, 10);
-}
-
-function getDefaultWindow() {
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-  const tomorrow = new Date(today);
-  tomorrow.setUTCDate(today.getUTCDate() + 1);
-  return { startDate: toIsoDate(today), endDate: toIsoDate(tomorrow) };
-}
+import { apiGet } from "@/lib/api/client";
 
 export function useCuratedHotels() {
-  const { startDate, endDate } = getDefaultWindow();
-  const city = "";
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
@@ -26,18 +10,7 @@ export function useCuratedHotels() {
     setIsLoading(true);
     setIsError(false);
     try {
-      const res = await searchHotels(
-        {
-          city,
-          startDate,
-          endDate,
-          roomsCount: 1,
-          page: 0,
-          size: 12,
-          sortBy: "RATING_DESC",
-        },
-        { signal }
-      );
+      const res = await apiGet("/hotels", { page: 0, size: 12, sort: "top_rated" }, { signal });
       setData(res);
     } catch (err) {
       if (err?.name !== "AbortError") {
@@ -46,7 +19,7 @@ export function useCuratedHotels() {
     } finally {
       setIsLoading(false);
     }
-  }, [city, startDate, endDate]);
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -55,7 +28,7 @@ export function useCuratedHotels() {
   }, [fetchHotels]);
 
   return {
-    city,
+    city: "",
     hotels: data?.content ?? [],
     isLoading,
     isError,
