@@ -217,9 +217,11 @@ export default function SearchPage() {
     if (selectedPropertyTypes.length > 0) {
       list = list.filter((h) => {
         const name = (h.name || "").toLowerCase();
+        const hAmenities = (h.amenities || []).map((x) => x.toLowerCase());
+        const isLuxuryResort = name.includes("resort") || name.includes("villas") || name.includes("palace") || (h.averageRating || 0) >= 4.0 || hAmenities.some(a => a.includes("pool") || a.includes("spa"));
         return selectedPropertyTypes.some((type) => {
-          if (type === "Resort") return name.includes("resort") || name.includes("villas") || name.includes("palace");
-          if (type === "Hotel") return !name.includes("resort") || name.includes("hotel");
+          if (type === "Resort") return isLuxuryResort;
+          if (type === "Hotel") return true;
           return true;
         });
       });

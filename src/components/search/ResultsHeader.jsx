@@ -1,7 +1,7 @@
 import { LayoutGrid, List } from "lucide-react";
 import { SORT_OPTIONS } from "./FilterSidebar";
 export function ResultsHeader({ total, city, from, to, sortBy, onSortChange, view, onViewChange, }) {
-    return (<div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+    return (<div id="results-header" className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div>
         <h2 className="font-display text-[26px] leading-tight text-ink md:text-[30px]">
           {total.toLocaleString()} properties found

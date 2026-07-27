@@ -119,15 +119,15 @@ export function AssistantPanel({ messages, interpreted, missing, onAsk, isThinki
           <div className="mt-3 grid grid-cols-2 gap-2">
             <label className="block">
               <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                Min price
+                Min price (₹)
               </span>
-              <input type="number" value={minLocal} onChange={(e) => setMinLocal(e.target.value)} placeholder="$50" className="mt-1.5 w-full rounded-xl border border-border bg-card px-3 py-2 text-[13px] text-ink focus:border-primary focus:outline-none"/>
+              <input type="number" value={minLocal} onChange={(e) => setMinLocal(e.target.value)} placeholder="₹1,000" className="mt-1.5 w-full rounded-xl border border-border bg-card px-3 py-2 text-[13px] text-ink focus:border-primary focus:outline-none"/>
             </label>
             <label className="block">
               <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                Max price
+                Max price (₹)
               </span>
-              <input type="number" value={maxLocal} onChange={(e) => setMaxLocal(e.target.value)} placeholder="$1,000+" className="mt-1.5 w-full rounded-xl border border-border bg-card px-3 py-2 text-[13px] text-ink focus:border-primary focus:outline-none"/>
+              <input type="number" value={maxLocal} onChange={(e) => setMaxLocal(e.target.value)} placeholder="₹50,000+" className="mt-1.5 w-full rounded-xl border border-border bg-card px-3 py-2 text-[13px] text-ink focus:border-primary focus:outline-none"/>
             </label>
           </div>
 

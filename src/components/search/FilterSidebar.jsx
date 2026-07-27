@@ -103,26 +103,26 @@ export function FilterSidebar({ value, onChange, onReset, availableHotels = [] }
         <div className="space-y-4">
           <input
             type="range"
-            min={0}
-            max={1000}
-            step={10}
+            min={500}
+            max={50000}
+            step={500}
             value={max}
             onChange={(e) => set("maxPrice", Number(e.target.value))}
             className="w-full accent-[color:var(--primary)]"
           />
-          <div className="flex justify-between text-[11.5px] text-muted-foreground">
-            <span>${min}</span>
-            <span>${max}+</span>
+          <div className="flex justify-between text-[11.5px] text-muted-foreground font-medium">
+            <span>₹{min.toLocaleString("en-IN")}</span>
+            <span>₹{max.toLocaleString("en-IN")}+</span>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <label className="rounded-xl border border-border bg-background px-3 py-2">
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                Min
+                Min (₹)
               </div>
               <input
                 type="number"
                 inputMode="numeric"
-                placeholder="$50"
+                placeholder="₹1,000"
                 value={value.minPrice ?? ""}
                 onChange={(e) =>
                   set("minPrice", e.target.value ? Number(e.target.value) : undefined)
@@ -132,12 +132,12 @@ export function FilterSidebar({ value, onChange, onReset, availableHotels = [] }
             </label>
             <label className="rounded-xl border border-border bg-background px-3 py-2">
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                Max
+                Max (₹)
               </div>
               <input
                 type="number"
                 inputMode="numeric"
-                placeholder="$1,000+"
+                placeholder="₹50,000+"
                 value={value.maxPrice ?? ""}
                 onChange={(e) =>
                   set("maxPrice", e.target.value ? Number(e.target.value) : undefined)
