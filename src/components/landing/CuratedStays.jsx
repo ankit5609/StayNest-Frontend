@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { HotelCarousel } from "./HotelCarousel";
 import { useCuratedHotels } from "@/hooks/queries/useCuratedHotels";
 function CardSkeleton() {
@@ -57,10 +58,10 @@ function CuratedStaysView({ hotels, isLoading, isError, onRetry }) {
             From serene cabins to urban retreats, discover stays designed to
             help you slow down and soak in more.
           </p>
-          <button type="button" className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition-colors duration-200 hover:bg-primary-mid">
+          <Link to="/search?city=Mumbai&startDate=2026-07-28&endDate=2026-07-29&roomsCount=1" className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition-colors duration-200 hover:bg-primary-mid">
             Explore all stays
             <ArrowRight className="h-4 w-4" aria-hidden/>
-          </button>
+          </Link>
         </motion.div>
 
         <div className="min-w-0">

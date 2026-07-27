@@ -17,7 +17,7 @@ function getDefaultWindow() {
 
 export function useCuratedHotels() {
   const { startDate, endDate } = getDefaultWindow();
-  const city = FEATURED_CITY;
+  const city = "";
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);

@@ -38,19 +38,22 @@ export function HotelCard({ hotel }) {
   });
   const primaryAmenities = (hotel.amenities ?? []).slice(0, 2);
 
+  const today = new Date();
+  const checkIn = today.toISOString().slice(0, 10);
+  const endWeek = new Date(today);
+  endWeek.setDate(today.getDate() + 3);
+  const checkOut = endWeek.toISOString().slice(0, 10);
+
+  const targetUrl = `/hotels/${hotel.id}?checkIn=${checkIn}&checkOut=${checkOut}&rooms=1`;
+
   return (
     <article
       ref={cardRef}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={(e) => {
-        if (e.target.closest("[data-wishlist-btn]")) return;
-        e.preventDefault();
-        navigate(`/hotels/${hotel.id}`);
-      }}
       className="group relative w-[300px] shrink-0 cursor-pointer select-none sm:w-[330px]"
     >
-      <Link to={`/hotels/${hotel.id}`} className="block cursor-pointer">
+      <Link to={targetUrl} className="block cursor-pointer">
         <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-surface shadow-[0_10px_30px_-18px_rgba(17,26,19,0.35)] transition-shadow duration-500 group-hover:shadow-[0_30px_60px_-25px_rgba(17,26,19,0.45)]">
           {photos.length === 0 && <div className="shimmer h-full w-full" />}
 
