@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { Nav } from "@/components/landing/Nav";
 import { Footer } from "@/components/landing/Footer";
 import { SearchSummaryBar } from "@/components/search/SearchSummaryBar";
-import { FilterSidebar } from "@/components/search/FilterSidebar";
+import { FilterSidebar, matchesPropertyType } from "@/components/search/FilterSidebar";
 import { ResultsGrid } from "@/components/search/ResultsGrid";
 import { ResultsHeader } from "@/components/search/ResultsHeader";
 import { EmptyState } from "@/components/search/EmptyState";
@@ -215,16 +215,7 @@ export default function SearchPage() {
     }
 
     if (selectedPropertyTypes.length > 0) {
-      list = list.filter((h) => {
-        const name = (h.name || "").toLowerCase();
-        const hAmenities = (h.amenities || []).map((x) => x.toLowerCase());
-        const isLuxuryResort = name.includes("resort") || name.includes("villas") || name.includes("palace") || (h.averageRating || 0) >= 4.0 || hAmenities.some(a => a.includes("pool") || a.includes("spa"));
-        return selectedPropertyTypes.some((type) => {
-          if (type === "Resort") return isLuxuryResort;
-          if (type === "Hotel") return true;
-          return true;
-        });
-      });
+      list = list.filter((h) => selectedPropertyTypes.some((type) => matchesPropertyType(h, type)));
     }
 
     return list;

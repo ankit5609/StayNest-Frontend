@@ -201,15 +201,27 @@ export function FilterSidebar({ value, onChange, onReset, availableHotels = [] }
         </ul>
       </Section>
 
+export function matchesPropertyType(h, type) {
+  const name = (h.name || "").toLowerCase();
+  const hAmenities = (h.amenities || []).map((x) => x.toLowerCase());
+  const isResortProp =
+    name.includes("resort") ||
+    name.includes("villas") ||
+    name.includes("palace") ||
+    name.includes("retreat") ||
+    name.includes("spa") ||
+    hAmenities.some((a) => a.includes("pool") || a.includes("spa"));
+
+  if (type === "Resort") return isResortProp;
+  if (type === "Hotel") return true;
+  return true;
+}
+
       <Section title="Property Type">
         <ul className="space-y-2.5">
           {PROPERTY_TYPES.map((p) => {
             const isChecked = selectedPropertyTypes.includes(p.id);
-            const count = availableHotels.filter((h) => {
-              const name = (h.name || "").toLowerCase();
-              if (p.id === "Resort") return name.includes("resort") || name.includes("villas") || name.includes("palace");
-              return !name.includes("resort") || name.includes("hotel");
-            }).length;
+            const count = availableHotels.filter((h) => matchesPropertyType(h, p.id)).length;
 
             return (
               <li key={p.id} className="flex items-center justify-between">
