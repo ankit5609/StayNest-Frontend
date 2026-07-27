@@ -24,9 +24,9 @@ export default function HotelDetailsPage() {
   const { hotelId } = useParams();
   const [searchParams] = useSearchParams();
 
-  const startDate = searchParams.get("checkIn") || todayPlus(7);
-  const endDate = searchParams.get("checkOut") || todayPlus(10);
-  const roomsCount = Number(searchParams.get("rooms")) || 1;
+  const startDate = searchParams.get("checkIn") || searchParams.get("startDate") || todayPlus(7);
+  const endDate = searchParams.get("checkOut") || searchParams.get("endDate") || todayPlus(10);
+  const roomsCount = Number(searchParams.get("rooms")) || Number(searchParams.get("roomsCount")) || 1;
 
   const nights = useMemo(() => {
     const n = Math.round((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000);

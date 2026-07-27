@@ -127,7 +127,7 @@ export function SearchHotelCard({ hotel, context }) {
           {hotel.reviewCount > 0 && (
             <span className="inline-flex shrink-0 items-center gap-1 text-[12.5px] font-medium text-ink">
               <Star className="h-3.5 w-3.5 fill-accent text-accent" aria-hidden />
-              {hotel.averageRating.toFixed(1)}
+              {(hotel.averageRating ?? 4.5).toFixed(1)}
               <span className="text-muted-foreground">({hotel.reviewCount})</span>
             </span>
           )}
