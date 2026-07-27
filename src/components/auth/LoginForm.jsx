@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Lock, Mail, Loader2, ShieldCheck, Building2 } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, Loader2, ShieldCheck, Building2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { login, persistSession } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
@@ -29,6 +29,7 @@ export function LoginForm() {
   const [asManager, setAsManager] = useState(false);
   const [gateOpen, setGateOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const [authError, setAuthError] = useState(null);
   const navigate = useNavigate();
 
   const {
@@ -42,6 +43,7 @@ export function LoginForm() {
 
   const onSubmit = async (values) => {
     setIsPending(true);
+    setAuthError(null);
     try {
       const res = await login(values);
       const roles = Array.isArray(res.roles) ? res.roles : [];
@@ -63,10 +65,10 @@ export function LoginForm() {
       const msg =
         err instanceof ApiError
           ? err.status === 401 || err.status === 403
-            ? "Incorrect email or password."
+            ? "Invalid email or password. Please check your credentials and try again."
             : err.message
           : "We couldn't sign you in. Please try again.";
-      toast.error(msg);
+      setAuthError(msg);
     } finally {
       setIsPending(false);
     }
@@ -99,6 +101,13 @@ export function LoginForm() {
           }
         />
       </div>
+
+      {authError && (
+        <div className="mt-4 flex items-center gap-2.5 rounded-xl border border-destructive/30 bg-destructive/10 p-3.5 text-[13px] font-medium text-destructive">
+          <AlertCircle className="h-4 w-4 shrink-0" aria-hidden />
+          <span>{authError}</span>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-3" noValidate>
         <div>

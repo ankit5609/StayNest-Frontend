@@ -86,7 +86,7 @@ export function getAuthHeaders() {
 async function extractError(res, method, path) {
   const status = res.status;
 
-  if (status === 401 || status === 403) {
+  if ((status === 401 || status === 403) && !path.includes("/auth")) {
     emitAuthRequired();
   }
 
