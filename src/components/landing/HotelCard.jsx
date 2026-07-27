@@ -54,6 +54,10 @@ export function HotelCard({ hotel }) {
       ref={cardRef}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={(e) => {
+        if (e.target.closest("[data-wishlist-btn]")) return;
+        navigate(targetUrl);
+      }}
       className="group relative block w-[300px] shrink-0 cursor-pointer sm:w-[330px]"
     >
       <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-surface shadow-[0_10px_30px_-18px_rgba(17,26,19,0.35)] transition-shadow duration-500 group-hover:shadow-[0_30px_60px_-25px_rgba(17,26,19,0.45)]">
