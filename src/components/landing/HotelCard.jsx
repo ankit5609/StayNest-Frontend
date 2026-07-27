@@ -12,6 +12,14 @@ const currency = new Intl.NumberFormat("en-IN", {
   maximumFractionDigits: 0,
 });
 
+const FALLBACK_HOTEL_PHOTOS = [
+  "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=80&fit=crop",
+  "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&q=80&fit=crop",
+  "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200&q=80&fit=crop",
+  "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=1200&q=80&fit=crop",
+  "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1200&q=80&fit=crop",
+];
+
 export function HotelCard({ hotel }) {
   const [hovered, setHovered] = useState(false);
   const [loaded, setLoaded] = useState({});
@@ -21,7 +29,8 @@ export function HotelCard({ hotel }) {
   const toggle = useToggleWishlist();
   const fav = ids.has(hotel.id);
   const navigate = useNavigate();
-  const photos = hotel.photos?.length ? hotel.photos : [];
+  const rawPhotos = hotel.photos ?? [];
+  const photos = rawPhotos.length > 0 ? rawPhotos : FALLBACK_HOTEL_PHOTOS;
   const index = useImageRotation({
     count: photos.length,
     intervalMs: 1800,
@@ -53,6 +62,10 @@ export function HotelCard({ hotel }) {
               loading={i === 0 ? "eager" : "lazy"}
               decoding="async"
               onLoad={() => setLoaded((s) => ({ ...s, [i]: true }))}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = FALLBACK_HOTEL_PHOTOS[i % FALLBACK_HOTEL_PHOTOS.length];
+              }}
               className={[
                 "pointer-events-none absolute inset-0 h-full w-full object-cover transition-all duration-[1200ms] ease-out",
                 i === index ? "opacity-100 scale-[1.02]" : "opacity-0 scale-100",

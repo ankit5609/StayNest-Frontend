@@ -25,13 +25,22 @@ function amenityIcon(name) {
   return <Icon className="h-3.5 w-3.5" aria-hidden />;
 }
 
+const FALLBACK_HOTEL_PHOTOS = [
+  "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=80&fit=crop",
+  "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&q=80&fit=crop",
+  "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200&q=80&fit=crop",
+  "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=1200&q=80&fit=crop",
+  "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1200&q=80&fit=crop",
+];
+
 export function SearchHotelCard({ hotel, context }) {
   const { ids } = useWishlistIds();
   const toggle = useToggleWishlist();
   const fav = ids.has(hotel.id);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
-  const photos = hotel.photos ?? [];
+  const rawPhotos = hotel.photos ?? [];
+  const photos = rawPhotos.length > 0 ? rawPhotos : FALLBACK_HOTEL_PHOTOS;
   const amenities = (hotel.amenities ?? []).slice(0, 4);
   const intervalRef = useRef(null);
 
@@ -66,6 +75,10 @@ export function SearchHotelCard({ hotel, context }) {
               src={src}
               alt={hotel.name}
               loading="lazy"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = FALLBACK_HOTEL_PHOTOS[i % FALLBACK_HOTEL_PHOTOS.length];
+              }}
               className={[
                 "absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out",
                 i === photoIndex ? "opacity-100" : "opacity-0",
