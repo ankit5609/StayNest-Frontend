@@ -11,7 +11,9 @@ import { useAuth } from "@/hooks/useAuth";
 export function RequireManager({ children }) {
     const { session } = useAuth();
     const navigate = useNavigate();
-    const isManager = !!session?.roles?.includes("HOTEL_MANAGER");
+    const rawRoles = session?.roles || session?.user?.roles || [];
+    const roleList = Array.isArray(rawRoles) ? rawRoles.map((r) => (typeof r === "string" ? r : r?.name || "")) : [];
+    const isManager = roleList.includes("HOTEL_MANAGER") || session?.role === "HOTEL_MANAGER";
     const isReady = session !== null || typeof window === "undefined";
     useEffect(() => {
         if (session === null && typeof window !== "undefined") {
