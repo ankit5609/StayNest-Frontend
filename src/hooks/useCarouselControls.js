@@ -75,32 +75,39 @@ export function useCarouselControls({
     let isDown = false;
     let startX = 0;
     let startScroll = 0;
+    let moved = false;
 
     const down = (e) => {
+      if (e.target.closest("[data-wishlist-btn]")) return;
       isDown = true;
+      moved = false;
       startX = e.clientX;
       startScroll = el.scrollLeft;
       pauseInteraction();
-      el.setPointerCapture?.(e.pointerId);
     };
+
     const move = (e) => {
       if (!isDown) return;
-      el.scrollLeft = startScroll - (e.clientX - startX);
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 5) {
+        moved = true;
+        el.scrollLeft = startScroll - dx;
+      }
     };
-    const up = (e) => {
+
+    const up = () => {
       isDown = false;
-      el.releasePointerCapture?.(e.pointerId);
     };
 
     el.addEventListener("pointerdown", down);
-    el.addEventListener("pointermove", move);
-    el.addEventListener("pointerup", up);
-    el.addEventListener("pointercancel", up);
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
     return () => {
       el.removeEventListener("pointerdown", down);
-      el.removeEventListener("pointermove", move);
-      el.removeEventListener("pointerup", up);
-      el.removeEventListener("pointercancel", up);
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
     };
   }, [pauseInteraction]);
 
