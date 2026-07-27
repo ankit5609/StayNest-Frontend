@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { BedDouble, CalendarDays, CheckCircle2, Loader2, MapPin, Sparkles, AlertCircle, RefreshCw } from "lucide-react";
 import { Nav } from "@/components/landing/Nav";
 import { Footer } from "@/components/landing/Footer";
-import { getBooking, getBookingStatus } from "@/lib/api/bookings";
+import { getBooking, getBookingStatus, verifyPayment } from "@/lib/api/bookings";
 
 const currency = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
 
@@ -19,6 +19,7 @@ function fmtDate(iso) {
 export default function SuccessPage() {
   const [searchParams] = useSearchParams();
   const bookingId = searchParams.get("bookingId") || "";
+  const sessionId = searchParams.get("session_id") || "";
   const id = Number(bookingId);
 
   const [confirmed, setConfirmed] = useState(false);
@@ -29,6 +30,13 @@ export default function SuccessPage() {
   const checkStatus = useCallback(async () => {
     if (!Number.isFinite(id) || confirmed || timedOut) return;
     try {
+      const verified = await verifyPayment(id, sessionId);
+      if (verified?.bookingStatus === "CONFIRMED" || verified?.bookingStatus === "COMPLETED") {
+        setConfirmed(true);
+        setTimedOut(false);
+        setBookingDetail(verified);
+        return;
+      }
       const statusRes = await getBookingStatus(id);
       const status = statusRes?.bookingStatus;
       if (status === "CONFIRMED" || status === "COMPLETED") {
@@ -40,7 +48,7 @@ export default function SuccessPage() {
     } catch {
       // Keep trying
     }
-  }, [id, confirmed, timedOut]);
+  }, [id, sessionId, confirmed, timedOut]);
 
   useEffect(() => {
     if (confirmed || timedOut || !Number.isFinite(id)) return;

@@ -48,3 +48,7 @@ export function getBooking(bookingId) {
 export function cancelBooking(bookingId) {
   return apiPost(`/bookings/${bookingId}/cancel`, {});
 }
+
+export function verifyPayment(bookingId, sessionId) {
+  return apiPost(`/bookings/${bookingId}/verify-payment?sessionId=${encodeURIComponent(sessionId || "")}`, {});
+}
