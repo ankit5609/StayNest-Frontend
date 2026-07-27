@@ -19,11 +19,26 @@ export default function SearchPage() {
   const navigate = useNavigate();
 
   const search = useMemo(() => {
+    let startDate = searchParams.get("startDate") || "";
+    let endDate = searchParams.get("endDate") || "";
+    if (startDate && endDate) {
+      const s = new Date(startDate);
+      const e = new Date(endDate);
+      if (!isNaN(s.getTime()) && !isNaN(e.getTime()) && e <= s) {
+        if (e.getMonth() < s.getMonth()) {
+          e.setFullYear(s.getFullYear() + 1);
+        } else {
+          e.setDate(s.getDate() + 2);
+        }
+        endDate = e.toISOString().slice(0, 10);
+      }
+    }
+
     return {
       q: searchParams.get("q") || "",
       city: searchParams.get("city") || "",
-      startDate: searchParams.get("startDate") || "",
-      endDate: searchParams.get("endDate") || "",
+      startDate,
+      endDate,
       roomsCount: Number(searchParams.get("roomsCount")) || 1,
       adults: Number(searchParams.get("adults")) || 2,
       children: Number(searchParams.get("children")) || 0,
