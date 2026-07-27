@@ -140,14 +140,19 @@ export default function SearchPage() {
       });
   }, [search.q, search.city, search.startDate, search.endDate, search.roomsCount, search.adults, searchParams, setSearchParams, nl]);
 
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
+  const [selectedPropertyTypes, setSelectedPropertyTypes] = useState([]);
+
   const filters = useMemo(
     () => ({
       minPrice: search.minPrice,
       maxPrice: search.maxPrice,
       minRating: search.minRating,
       sortBy: search.sortBy,
+      selectedAmenities,
+      selectedPropertyTypes,
     }),
-    [search.minPrice, search.maxPrice, search.minRating, search.sortBy]
+    [search.minPrice, search.maxPrice, search.minRating, search.sortBy, selectedAmenities, selectedPropertyTypes]
   );
 
   const query = useInfiniteHotelSearch({
@@ -163,6 +168,9 @@ export default function SearchPage() {
   });
 
   const setFilters = (next) => {
+    if (next.selectedAmenities !== undefined) setSelectedAmenities(next.selectedAmenities);
+    if (next.selectedPropertyTypes !== undefined) setSelectedPropertyTypes(next.selectedPropertyTypes);
+
     const params = new URLSearchParams(searchParams);
     if (next.minPrice !== undefined) params.set("minPrice", String(next.minPrice));
     if (next.maxPrice !== undefined) params.set("maxPrice", String(next.maxPrice));
@@ -173,6 +181,8 @@ export default function SearchPage() {
   };
 
   const resetFilters = () => {
+    setSelectedAmenities([]);
+    setSelectedPropertyTypes([]);
     const params = new URLSearchParams(searchParams);
     params.delete("minPrice");
     params.delete("maxPrice");
@@ -184,9 +194,42 @@ export default function SearchPage() {
 
   const pages = query.data?.pages ?? [];
   const lastPage = pages[pages.length - 1];
-  const hotels = pages.flatMap((p) => p.content);
+  const rawHotels = pages.flatMap((p) => p.content);
+
+  const hotels = useMemo(() => {
+    let list = rawHotels;
+
+    if (selectedAmenities.length > 0) {
+      list = list.filter((h) => {
+        const hAmenities = (h.amenities || []).map((x) => x.toLowerCase());
+        return selectedAmenities.every((id) => {
+          if (id === "wifi") return hAmenities.some((x) => x.includes("wifi") || x.includes("wi-fi"));
+          if (id === "pool") return hAmenities.some((x) => x.includes("pool"));
+          if (id === "spa") return hAmenities.some((x) => x.includes("spa"));
+          if (id === "dining") return hAmenities.some((x) => x.includes("restaurant") || x.includes("dining"));
+          if (id === "fitness") return hAmenities.some((x) => x.includes("fitness") || x.includes("gym"));
+          if (id === "parking") return hAmenities.some((x) => x.includes("parking") || x.includes("valet"));
+          return true;
+        });
+      });
+    }
+
+    if (selectedPropertyTypes.length > 0) {
+      list = list.filter((h) => {
+        const name = (h.name || "").toLowerCase();
+        return selectedPropertyTypes.some((type) => {
+          if (type === "Resort") return name.includes("resort") || name.includes("villas") || name.includes("palace");
+          if (type === "Hotel") return !name.includes("resort") || name.includes("hotel");
+          return true;
+        });
+      });
+    }
+
+    return list;
+  }, [rawHotels, selectedAmenities, selectedPropertyTypes]);
+
   const requiredReady = Boolean(search.city && search.startDate && search.endDate && search.roomsCount);
-  const total = lastPage?.totalElements ?? 0;
+  const total = hotels.length;
   const from = total === 0 ? 0 : 1;
   const to = hotels.length;
   const hasMore = Boolean(query.hasNextPage);
@@ -207,7 +250,7 @@ export default function SearchPage() {
 
       <main className="mx-auto max-w-[1440px] px-6 pb-12 pt-6 md:px-10">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_minmax(0,1fr)_340px]">
-          <FilterSidebar value={filters} onChange={setFilters} onReset={resetFilters} />
+          <FilterSidebar value={filters} onChange={setFilters} onReset={resetFilters} availableHotels={rawHotels} />
 
           <section className="min-w-0 space-y-6">
             <div>
