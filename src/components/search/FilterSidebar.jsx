@@ -23,6 +23,22 @@ export const PROPERTY_TYPES = [
   { id: "Resort", label: "Resort" },
 ];
 
+export function matchesPropertyType(h, type) {
+  const name = (h.name || "").toLowerCase();
+  const hAmenities = (h.amenities || []).map((x) => x.toLowerCase());
+  const isResortProp =
+    name.includes("resort") ||
+    name.includes("villas") ||
+    name.includes("palace") ||
+    name.includes("retreat") ||
+    name.includes("spa") ||
+    hAmenities.some((a) => a.includes("pool") || a.includes("spa"));
+
+  if (type === "Resort") return isResortProp;
+  if (type === "Hotel") return true;
+  return true;
+}
+
 function Section({ title, children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
@@ -200,22 +216,6 @@ export function FilterSidebar({ value, onChange, onReset, availableHotels = [] }
           })}
         </ul>
       </Section>
-
-export function matchesPropertyType(h, type) {
-  const name = (h.name || "").toLowerCase();
-  const hAmenities = (h.amenities || []).map((x) => x.toLowerCase());
-  const isResortProp =
-    name.includes("resort") ||
-    name.includes("villas") ||
-    name.includes("palace") ||
-    name.includes("retreat") ||
-    name.includes("spa") ||
-    hAmenities.some((a) => a.includes("pool") || a.includes("spa"));
-
-  if (type === "Resort") return isResortProp;
-  if (type === "Hotel") return true;
-  return true;
-}
 
       <Section title="Property Type">
         <ul className="space-y-2.5">
