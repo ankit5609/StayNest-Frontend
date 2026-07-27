@@ -28,7 +28,7 @@ export default function SuccessPage() {
   const [bookingDetail, setBookingDetail] = useState(null);
 
   const checkStatus = useCallback(async () => {
-    if (!Number.isFinite(id) || confirmed || timedOut) return;
+    if (!Number.isFinite(id) || confirmed) return;
     try {
       const verified = await verifyPayment(id, sessionId);
       if (verified?.bookingStatus === "CONFIRMED" || verified?.bookingStatus === "COMPLETED") {
@@ -46,27 +46,26 @@ export default function SuccessPage() {
         setBookingDetail(detail);
       }
     } catch {
-      // Keep trying
+      // Keep trying silently
     }
-  }, [id, sessionId, confirmed, timedOut]);
+  }, [id, sessionId, confirmed]);
 
   useEffect(() => {
-    if (confirmed || timedOut || !Number.isFinite(id)) return;
+    if (confirmed || !Number.isFinite(id)) return;
     checkStatus();
     const interval = setInterval(() => {
       checkStatus();
       setPollTime((prev) => {
-        if (prev >= 60) {
+        if (prev >= 120) {
           setTimedOut(true);
-          clearInterval(interval);
           return prev;
         }
-        return prev + 1.5;
+        return prev + 2;
       });
-    }, 1500);
+    }, 2000);
 
     return () => clearInterval(interval);
-  }, [checkStatus, confirmed, timedOut, id]);
+  }, [checkStatus, confirmed, id]);
 
   const handleRetry = () => {
     setTimedOut(false);
