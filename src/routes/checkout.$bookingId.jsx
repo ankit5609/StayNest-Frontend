@@ -109,8 +109,17 @@ export default function CheckoutPage() {
       <main className="mx-auto max-w-[1200px] px-4 pt-24 pb-16 md:px-8">
         <button
           type="button"
-          onClick={() => navigate(`/hotels/${booking.hotel.id}`)}
-          className="mb-6 inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground hover:text-primary"
+          onClick={() => {
+            if (booking?.hotel?.id) {
+              const checkIn = booking.checkInDate || "";
+              const checkOut = booking.checkOutDate || "";
+              const rooms = booking.roomsCount || 1;
+              navigate(`/hotels/${booking.hotel.id}?checkIn=${checkIn}&checkOut=${checkOut}&rooms=${rooms}`);
+            } else {
+              navigate(-1);
+            }
+          }}
+          className="mb-6 inline-flex items-center gap-1.5 text-[12.5px] font-medium text-muted-foreground transition-colors hover:text-primary"
         >
           <ArrowLeft className="h-3.5 w-3.5" /> Back to stay
         </button>
