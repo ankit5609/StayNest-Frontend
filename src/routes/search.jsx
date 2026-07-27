@@ -37,12 +37,54 @@ export default function SearchPage() {
     };
   }, [searchParams]);
 
-  const [interpreted, setInterpreted] = useState();
+  const [interpreted, setInterpreted] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem("staynest_assistant_interpreted");
+      return saved ? JSON.parse(saved) : undefined;
+    } catch {
+      return undefined;
+    }
+  });
   const [missing, setMissing] = useState();
-  const [messages, setMessages] = useState([]);
-  const [view, setView] = useState("grid");
+  const [messages, setMessages] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem("staynest_assistant_messages");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [view, setView] = useState(() => {
+    try {
+      return sessionStorage.getItem("staynest_search_view") || "grid";
+    } catch {
+      return "grid";
+    }
+  });
   const [assistantHighlight, setAssistantHighlight] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem("staynest_assistant_messages", JSON.stringify(messages));
+    } catch {}
+  }, [messages]);
+
+  useEffect(() => {
+    try {
+      if (interpreted) {
+        sessionStorage.setItem("staynest_assistant_interpreted", JSON.stringify(interpreted));
+      } else {
+        sessionStorage.removeItem("staynest_assistant_interpreted");
+      }
+    } catch {}
+  }, [interpreted]);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem("staynest_search_view", view);
+    } catch {}
+  }, [view]);
 
   const nl = useNLHotelSearch();
   const lastProcessedQ = useRef(null);
@@ -140,8 +182,35 @@ export default function SearchPage() {
       });
   }, [search.q, search.city, search.startDate, search.endDate, search.roomsCount, search.adults, searchParams, setSearchParams, nl]);
 
-  const [selectedAmenities, setSelectedAmenities] = useState([]);
-  const [selectedPropertyTypes, setSelectedPropertyTypes] = useState([]);
+  const [selectedAmenities, setSelectedAmenities] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem("staynest_amenities");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [selectedPropertyTypes, setSelectedPropertyTypes] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem("staynest_property_types");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem("staynest_amenities", JSON.stringify(selectedAmenities));
+    } catch {}
+  }, [selectedAmenities]);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem("staynest_property_types", JSON.stringify(selectedPropertyTypes));
+    } catch {}
+  }, [selectedPropertyTypes]);
 
   const filters = useMemo(
     () => ({
@@ -183,6 +252,14 @@ export default function SearchPage() {
   const resetFilters = () => {
     setSelectedAmenities([]);
     setSelectedPropertyTypes([]);
+    setMessages([]);
+    setInterpreted(undefined);
+    try {
+      sessionStorage.removeItem("staynest_amenities");
+      sessionStorage.removeItem("staynest_property_types");
+      sessionStorage.removeItem("staynest_assistant_messages");
+      sessionStorage.removeItem("staynest_assistant_interpreted");
+    } catch {}
     const params = new URLSearchParams(searchParams);
     params.delete("minPrice");
     params.delete("maxPrice");
