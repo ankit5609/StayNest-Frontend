@@ -90,7 +90,7 @@ export default function HotelsListPage() {
 function HotelCard({ hotel, onDelete, }) {
     const cover = hotel.photos[0];
     return (<div className="group overflow-hidden rounded-2xl border border-border/60 bg-white shadow-[0_2px_10px_-6px_rgba(17,26,19,0.15)] transition-shadow hover:shadow-[0_10px_30px_-10px_rgba(17,26,19,0.25)]">
-      <Link to="/manage/hotels/$hotelId" params={{ hotelId: String(hotel.id) }} className="block">
+      <Link to={`/manage/hotels/${hotel.id}`} className="block">
         <div className="relative aspect-[16/10] bg-surface">
           {cover ? (<img src={cover} alt={hotel.name} className="h-full w-full object-cover" loading="lazy"/>) : (<div className="grid h-full place-items-center text-muted-foreground">
               <HotelIcon className="h-10 w-10 opacity-30"/>
@@ -105,7 +105,7 @@ function HotelCard({ hotel, onDelete, }) {
       <div className="space-y-2 p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <Link to="/manage/hotels/$hotelId" params={{ hotelId: String(hotel.id) }}>
+            <Link to={`/manage/hotels/${hotel.id}`}>
               <h3 className="truncate font-display text-lg text-primary hover:underline">
                 {hotel.name}
               </h3>

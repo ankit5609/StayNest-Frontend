@@ -67,7 +67,7 @@ export default function BookingsPage() {
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"/>
           <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by ID or room type" className="h-10 rounded-xl pl-9"/>
         </div>
-        {selected ? (<Link to="/manage/hotels/$hotelId" params={{ hotelId: String(selected) }} className="text-[13px] font-medium text-primary hover:underline">
+        {selected ? (<Link to={`/manage/hotels/${selected}`} className="text-[13px] font-medium text-primary hover:underline">
             Open workspace →
           </Link>) : null}
       </div>

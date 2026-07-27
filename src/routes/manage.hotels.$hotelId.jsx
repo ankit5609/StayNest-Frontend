@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, BarChart3, CalendarClock, CalendarDays, DoorOpen, Home, Loader2, Wallet, } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useManagerHotel } from "@/hooks/queries/manager";

@@ -22,10 +22,7 @@ export default function NewHotelPage() {
             try {
                 const hotel = await createMut.mutateAsync(body);
                 toast.success("Hotel created. Add photos & rooms next.");
-                navigate({
-                    to: "/manage/hotels/$hotelId",
-                    params: { hotelId: String(hotel.id) },
-                });
+                navigate(`/manage/hotels/${hotel.id}`);
             }
             catch (err) {
                 toast.error(err instanceof Error ? err.message : "Failed to create hotel");
